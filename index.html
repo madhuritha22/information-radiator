@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Team Info Radiator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background-color: #f0f0f0; }
+    .section { background: white; padding: 15px; margin-bottom: 20px; border-radius: 10px; }
+    canvas { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <h1>📊 Team Mouser Information Radiator</h1>
+  <div class="section">
+  <h2>🧠 Team Mood</h2>
+  <button onclick="vote('😊')">😊</button>
+  <button onclick="vote('😐')">😐</button>
+  <button onclick="vote('😢')">😢</button>
+  <p>Today's Mood: <span id="moodCount">Not voted</span></p>
+</div>
+
+<script>
+  function vote(emoji) {
+    document.getElementById("moodCount").innerText = emoji;
+  }
+</script>
+
+  <div class="section">
+    <h2>🔧 GitHub Issues & PRs</h2>
+    <p>🟢 Open Issues: <span id="open-issues">...</span></p>
+    <p>🟣 Open PRs: <span id="open-prs">...</span></p>
+  </div>
+
+  <div class="section">
+    <h2>📉 Sprint Progress</h2>
+    <canvas id="sprintChart"></canvas>
+  </div>
+
+
+  <div class="section">
+    <h2>👥 Team Contributions</h2>
+    <ul>
+      <li>Madhuritha – UI & Testing</li>
+      <li>Dhruv- Rerum implementation</li>
+      <li>Prem- Git management and testing</li>
+      <!-- Add more team roles -->
+    </ul>
+  </div>
+  <h3>📅 Upcoming Milestones</h3>
+<ul>
+  <li>Code review and Demo – June 9</li>
+  <li>Upstream open source – June 12</li>
+</ul>
+
+  <div class="section">
+    <h2>💡 Suggestions Box</h2>
+    <input type="text" id="suggestionInput" placeholder="Enter suggestion" />
+    <button onclick="addSuggestion()">Add</button>
+    <ul id="suggestionList"></ul>
+  </div>
+
+  <script>
+    const repo = "slu-csci-5030/Mouser";
+    fetch(`https://api.github.com/repos/${repo}/issues?state=open`)
+      .then(res => res.json())
+      .then(data => document.getElementById("open-issues").innerText = data.length);
+
+    fetch(`https://api.github.com/repos/${repo}/pulls?state=open`)
+      .then(res => res.json())
+      .then(data => document.getElementById("open-prs").innerText = data.length);
+
+    const ctx = document.getElementById('sprintChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        datasets: [{
+          label: 'Tasks Remaining',
+          data: [20, 18, 14, 7, 2],
+          borderColor: 'blue',
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    function addSuggestion() {
+      const input = document.getElementById("suggestionInput");
+      const suggestion = input.value.trim();
+      if (suggestion !== "") {
+        const li = document.createElement("li");
+        li.innerText = suggestion;
+        document.getElementById("suggestionList").appendChild(li);
+        input.value = "";
+      }
+    }
+  </script>
+</body>
+</html>
